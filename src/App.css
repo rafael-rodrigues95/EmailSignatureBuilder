@@ -2,16 +2,38 @@
   text-align: center;
 }
 
+html {
+  color: red;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
 
+@media (max-width: 600px) {
+  .imageStyle {
+    display: none;
+}
+
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
+
+.btn-secondary, .btn-primary {
+  --bs-btn-color: var(--bs-white);
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-disabled-color: var(--bs-white);
+  --bs-btn-active-color: var(--bs-white);
+}
+
+.btn-primary:disabled {
+  color: var(--bs-white)
+}
+
 
 h3 {
   color: #198754;

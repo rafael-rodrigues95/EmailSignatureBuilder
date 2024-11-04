@@ -1,0 +1,15 @@
+
+// scss-docs-start theme-color-variables overrides
+$primary:       rgb(50, 158, 134) !default;
+$secondary:     #f9be4e !default;
+$success:       #1e8363 !default;
+$info:          #d6f2de !default;
+$warning:       #f9be4e !default;
+$danger:        #BF211E !default;
+$light:         #f1f1f1 !default;
+$dark:          #003834 !default;
+
+$btn-hover-bg-tint-amount: 30%;
+
+// Required
+@import "~bootstrap/scss/bootstrap";

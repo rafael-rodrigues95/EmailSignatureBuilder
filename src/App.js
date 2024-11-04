@@ -1,11 +1,18 @@
-import React, { useState, useRef, useEffect, StyleSheet } from "react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-// Bootstrap CSS
-import "bootstrap/dist/css/bootstrap.min.css";
-// Bootstrap Bundle JS
-import "bootstrap/dist/js/bootstrap.bundle.min";
-
-import { Container, Row, Col, Dropdown, DropdownButton } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css"; // Bootstrap CSS
+import {
+  Container,
+  Row,
+  Col,
+  Dropdown,
+  DropdownButton,
+  Button,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "react-bootstrap";
+import "bootstrap/dist/js/bootstrap.bundle.min"; // Bootstrap Bundle JS
+import "./scss/custom.scss"; // Custom Sass file
+import "./App.css"; // Other CSS files
+import React, { useState, useRef, useEffect } from "react";
 
 const SignatureGenerator = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +27,7 @@ const SignatureGenerator = () => {
   const [htmlCode, setHtmlCode] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
   const [sigGenerated, setSigGenerated] = useState(false);
+  const [hasTelephone, setHasTelephone] = useState(1, 2);
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -27,9 +35,17 @@ const SignatureGenerator = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleRamal = (val) => {
+    val === 2
+      ? setFormData({ ...formData, phone: "não possui" })
+      : setFormData({ ...formData, phone: "" });
+
+    setHasTelephone(val);
+  };
+
   useEffect(() => {
     validateForm();
-  }, [formData, address, unitName]);
+  }, [formData, address, unitName, hasTelephone]);
 
   const handleGenerate = () => {
     const html = generateHTML(formData);
@@ -41,14 +57,12 @@ const SignatureGenerator = () => {
     let errors = {};
 
     // Validate name field
-    if (
-      !formData.name ||
-      !formData.jobTitle ||
-      !formData.phone ||
-      !formData.phone ||
-      !formData.selectedDivision
-    ) {
+    if (!formData.name || !formData.jobTitle || !formData.selectedDivision) {
       errors.name = "Dados não preenchidos.";
+    }
+
+    if (hasTelephone === 1 && !formData.phone) {
+      errors.name = "Telefone não preenchido.";
     }
 
     // Validate name field
@@ -56,7 +70,7 @@ const SignatureGenerator = () => {
       errors.name = "Dados não preenchidos.";
     }
 
-    // Validate name field
+    // Validate cargo field
     if (!address) {
       errors.name = "Dados não preenchidos.";
     }
@@ -111,6 +125,10 @@ const SignatureGenerator = () => {
 
   const divRef = useRef(null);
 
+  // const handleHasNotTelephone = () => {
+  //   setHasTelephone("")
+  // }
+
   const handleSelectText = async () => {
     if (isFormValid) {
       const range = document.createRange();
@@ -136,31 +154,65 @@ const SignatureGenerator = () => {
   };
 
   const titleStyle = {
-    color: "#198754",
+    fontSize: "5vh",
   };
+
+  const imageStyle = {};
 
   const divTitleStyle = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgb(50, 158, 134)",
+    color: "white",
   };
 
   return (
     <div>
-      <p>&nbsp;</p>
       <div style={divTitleStyle}>
-        <h3 className="mt-5" style={titleStyle}>
-          <i>Gerador de assinatura para Email</i>
-        </h3>
-        <p>&nbsp;</p>
+        <Container>
+          <Row>
+            <Col>
+              <p>&nbsp;</p>
+              <p className="mt-5 mb-5">
+                Gerador de Assinatura para <br />
+                <span style={titleStyle}>Email da DPMG</span>
+              </p>
+              <p>&nbsp;</p>
+            </Col>
+            <Col>
+              <p>&nbsp;</p>
+            </Col>
+            <Col xs={2}>
+              <p>&nbsp;</p>
+              <img
+                src="https://gerais.defensoria.mg.def.br/sistemas/scsdp/img/logo.png"
+                className="imageStyle"
+                alt="logo da Defensoria"
+                height="150vw"
+              ></img>
+            </Col>
+          </Row>
+        </Container>
       </div>
+
+      <p>&nbsp;</p>
       <Container>
         <div className="card  px-5">
           <form>
             <Row>
               <Col>
                 <p>&nbsp;</p>
+                <p>
+                  Preencha todos os campos abaixo para criar uma assinatura HTML
+                  <br />
+                  para seu email institucional.
+                </p>
                 <p>&nbsp;</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
                 <div className="form-group">
                   <label>Seu nome para a assinatura:</label>
                   <br />
@@ -173,7 +225,44 @@ const SignatureGenerator = () => {
                   />
                 </div>
                 <br />
-
+              </Col>
+              <Col>
+                <div className="form-group">
+                  <label>Seu cargo:</label>
+                  <br />
+                  <input
+                    type="text"
+                    name="jobTitle"
+                    value={formData.jobTitle}
+                    onChange={handleChange}
+                    placeholder="Job Title"
+                  />
+                </div>
+                <br />
+              </Col>
+              <Col>
+                <div className="form-group">
+                  <label>Possui Ramal?</label>
+                  <br />
+                  <ToggleButtonGroup
+                    type="radio"
+                    name="toggle"
+                    value={hasTelephone}
+                    onChange={handleRamal}
+                  >
+                    <ToggleButton id="tbg-btn-1" value={1} variant="secondary">
+                      Sim
+                    </ToggleButton>
+                    <ToggleButton id="tbg-btn-2" value={2} variant="secondary">
+                      Não
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </div>
+              </Col>
+              <Col></Col>
+            </Row>
+            <Row>
+              <Col>
                 <div className="form-group">
                   <label>Setor:</label>
                   <DropdownButton
@@ -192,21 +281,6 @@ const SignatureGenerator = () => {
                 <br />
               </Col>
               <Col>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <div className="form-group">
-                  <label>Seu cargo:</label>
-                  <br />
-                  <input
-                    type="text"
-                    name="jobTitle"
-                    value={formData.jobTitle}
-                    onChange={handleChange}
-                    placeholder="Job Title"
-                  />
-                </div>
-                <br />
-
                 <div className="form-group">
                   <label>Unidade:</label>
                   <DropdownButton
@@ -233,10 +307,15 @@ const SignatureGenerator = () => {
                 <br />
               </Col>
               <Col>
-                <p>&nbsp;</p>
-                <p>&nbsp;</p>
-                <div className="form-group">
-                  <label>Telefone:</label>
+                <div
+                  className="form-group"
+                  style={{
+                    opacity: hasTelephone === 1 ? 1 : 0,
+                    transition: "all .4s",
+                    visibility: hasTelephone === 1 ? "visible" : "hidden",
+                  }}
+                >
+                  <label>Ramal:</label>
                   <br />
                   <input
                     type="text"
@@ -248,17 +327,22 @@ const SignatureGenerator = () => {
                 </div>
                 <br />
                 <br />
-                <button
+
+                <p>&nbsp;</p>
+              </Col>
+
+              <Col>
+              <p></p>
+                <Button
                   style={{ opacity: isFormValid ? 1 : 0.5 }}
                   disabled={!isFormValid}
                   type="button"
-                  className="btn btn-success"
+                  variant="primary"
                   onClick={handleGenerate}
                 >
                   Gerar assinatura HTML
-                </button>
-
-                <p>&nbsp;</p>
+                </Button>
+                <p></p>
               </Col>
             </Row>
           </form>
@@ -266,20 +350,70 @@ const SignatureGenerator = () => {
       </Container>
       <p>&nbsp;</p>
       <Container>
-        <div className="card px-5" style={{ opacity: sigGenerated ? 1 : 0 }}>
-        <h3 className="mt-5" style={titleStyle}>
-          &nbsp;
-        </h3>
+        <div
+          className="card px-5"
+          style={{
+            opacity: sigGenerated ? 1 : 0,
+            transition: "all .5s",
+            visibility: sigGenerated ? "visible" : "hidden",
+          }}
+        >
+          <h3 className="mt-3" style={titleStyle}>
+            &nbsp;
+          </h3>
           <div>
             {/* <pre>{htmlCode}</pre> */}
             <div ref={divRef} dangerouslySetInnerHTML={{ __html: htmlCode }} />
             <p>&nbsp;</p>
-            <button className="btn btn-success" onClick={handleSelectText}>
+            <Button variant="primary" onClick={handleSelectText}>
               Copiar para a Área de transferência
-            </button>
+            </Button>
             <p>&nbsp;</p>
           </div>
         </div>
+      </Container>
+      <p>&nbsp;</p>
+      <Container>
+        <Row>
+          <Col>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in
+              neque volutpat, euismod nunc eu, posuere ante. Nullam tincidunt
+              commodo laoreet. Curabitur eu orci id risus suscipit faucibus. Sed
+              mollis faucibus ligula, vitae semper urna ornare id. Praesent id
+              elit vitae mauris suscipit vulputate. Phasellus efficitur eros at
+              tellus volutpat, sed facilisis nisl lacinia. Integer sed nisi quis
+              velit pharetra pretium sed vel nisl. Ut gravida, magna non
+              bibendum dignissim, odio orci molestie eros, quis posuere massa
+              velit ac neque. Sed vitae felis a ante lobortis suscipit at
+              lacinia sem. Etiam et lectus a augue eleifend consectetur. Mauris
+              tellus nibh, molestie vel lacus eu, consectetur scelerisque
+              libero. Phasellus consectetur fermentum faucibus. Phasellus
+              pretium nisi semper fringilla mollis. In commodo quam quis diam
+              suscipit hendrerit. Vestibulum et quam et ex aliquet ultricies.
+              Quisque tellus leo, consectetur in elit sit amet, facilisis
+              maximus dui. Curabitur lobortis mi nec pharetra ultricies. Proin
+              congue diam nec libero eleifend ultrices. Praesent augue dui,
+              finibus at sapien eget, tempus condimentum purus.
+            </p>
+          </Col>
+          <Col>
+            <p>
+              Vivamus nibh eros, scelerisque eget nulla a, eleifend volutpat
+              erat. Sed tempor eleifend nunc, molestie sodales diam condimentum
+              id. Nam id felis non orci sagittis aliquet. Pellentesque egestas
+              non est eu scelerisque. Integer sed facilisis tellus, aliquam
+              porta nisl. Sed accumsan justo at blandit vestibulum. Praesent
+              iaculis pellentesque eros. Pellentesque feugiat justo mauris, non
+              dictum odio viverra eu. Aliquam suscipit fringilla gravida.
+              Vestibulum commodo nulla est, eget finibus ipsum malesuada
+              venenatis. Cras luctus tellus eget nibh consequat sollicitudin. In
+              ultricies dui at libero tincidunt accumsan. Aenean quis dictum
+              magna. Curabitur lorem ex, efficitur at arcu eu, malesuada
+              ultrices elit. Sed sit amet velit dolor.
+            </p>
+          </Col>
+        </Row>
       </Container>
     </div>
   );
@@ -317,11 +451,11 @@ const generateHTML = (data) => {
                         ${data.selectedDivision}<br/>
                         Defensoria Pública do Estado de Minas Gerais<br/>
                         ${data.selectedUnit}<br/>
-                        Tel. <a href="tel:${data.phone}"
+                        Ramal: <a href="tel:${data.phone}"
                         style="text-decoration: none; color: rgb(30, 30, 30); font-size: 0.8vw; margin-right: 10px;">
                         ${data.phone}
                         </a> 
-                        / Geral <a href="tel:03125228676"
+                        / Geral: <a href="tel:03125228676"
                         style="text-decoration: none; color: rgb(30, 30, 30); font-size: 0.8vw; margin-right: 10px;">
                         (31) 2522-8676
                         </a>
