@@ -8,10 +8,12 @@ import {
   Button,
   ToggleButton,
   ToggleButtonGroup,
-} from "react-bootstrap";
+  FormControl
+} from "react-bootstrap"; // React Bootstrap components
 import "bootstrap/dist/js/bootstrap.bundle.min"; // Bootstrap Bundle JS
 import "./scss/custom.scss"; // Custom Sass file
 import "./App.css"; // Other CSS files
+import InputMask from 'react-input-mask'
 import React, { useState, useRef, useEffect } from "react";
 
 const SignatureGenerator = () => {
@@ -22,7 +24,7 @@ const SignatureGenerator = () => {
     selectedUnit: "",
     selectedDivision: "",
   });
-  const [address, setAdress] = useState("");
+  const [address, setAddress] = useState("");
   const [unitName, setUnitName] = useState("");
   const [htmlCode, setHtmlCode] = useState("");
   const [isFormValid, setIsFormValid] = useState(false);
@@ -62,17 +64,17 @@ const SignatureGenerator = () => {
     }
 
     if (hasTelephone === 1 && !formData.phone) {
-      errors.name = "Telefone não preenchido.";
+      errors.phone = "Telefone não preenchido.";
     }
 
     // Validate name field
     if (!unitName) {
-      errors.name = "Dados não preenchidos.";
+      errors.unitName = "Dados não preenchidos.";
     }
 
     // Validate cargo field
     if (!address) {
-      errors.name = "Dados não preenchidos.";
+      errors.address = "Dados não preenchidos.";
     }
 
     // Set the errors and update form validity
@@ -81,7 +83,7 @@ const SignatureGenerator = () => {
   };
 
   const handleSelectDivision = (eventKey) => {
-    setAdress(eventKey);
+    setAddress(eventKey);
     let selectedDivision = "";
     switch (eventKey) {
       case "STI":
@@ -149,7 +151,7 @@ const SignatureGenerator = () => {
       console.log("Form submitted successfully!");
     } else {
       // Form is invalid, display error messages
-      console.log("Existe erro no formulario.");
+      console.log("There is one or more error in the form.");
     }
   };
 
@@ -216,12 +218,19 @@ const SignatureGenerator = () => {
                 <div className="form-group">
                   <label>Seu nome para a assinatura:</label>
                   <br />
-                  <input
+                  {/* <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Name"
+                  /> */}
+                  <FormControl
+                  type="text"
+                  placeholder="Name"
+                  name="name"
+                    value={formData.name}
+                    onChange={handleChange}
                   />
                 </div>
                 <br />
@@ -230,12 +239,20 @@ const SignatureGenerator = () => {
                 <div className="form-group">
                   <label>Seu cargo:</label>
                   <br />
-                  <input
+                  {/*<input
                     type="text"
                     name="jobTitle"
                     value={formData.jobTitle}
                     onChange={handleChange}
                     placeholder="Job Title"
+                  /> */}
+                  <FormControl
+                  type="text"
+                  mask="(99) 9999-9999"
+                  placeholder="Job Title"
+                  name="jobTitle"
+                    value={formData.jobTitle}
+                    onChange={handleChange}
                   />
                 </div>
                 <br />
@@ -259,7 +276,7 @@ const SignatureGenerator = () => {
                   </ToggleButtonGroup>
                 </div>
               </Col>
-              <Col></Col>
+              
             </Row>
             <Row>
               <Col>
@@ -317,12 +334,14 @@ const SignatureGenerator = () => {
                 >
                   <label>Ramal:</label>
                   <br />
-                  <input
-                    type="text"
-                    name="phone"
+                  <FormControl
+                  type="text"
+                  as={InputMask}
+                  mask="(99) 9999-9999"
+                  placeholder="Phone"
+                  name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="Phone"
                   />
                 </div>
                 <br />
@@ -330,9 +349,10 @@ const SignatureGenerator = () => {
 
                 <p>&nbsp;</p>
               </Col>
-
-              <Col>
-              <p></p>
+              
+            </Row>
+            <Row>
+            <Col>
                 <Button
                   style={{ opacity: isFormValid ? 1 : 0.5 }}
                   disabled={!isFormValid}
@@ -342,7 +362,7 @@ const SignatureGenerator = () => {
                 >
                   Gerar assinatura HTML
                 </Button>
-                <p></p>
+                <p>&nbsp;</p>
               </Col>
             </Row>
           </form>
