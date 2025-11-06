@@ -13,10 +13,12 @@ import {
 import "bootstrap/dist/js/bootstrap.bundle.min"; // Bootstrap Bundle JS
 import "./scss/custom.scss"; // Custom Sass file
 import "./App.css"; // Other CSS files
-import { useUnidadeData } from "./hooks/useUnidadeData";
+import { useUnidadeData } from "./hooks/useFetchData";
+import { useSetorData } from "./hooks/useFetchData";
 import InputMask from "react-input-mask";
 import React, { useState, useRef, useEffect } from "react";
 import UnidadeDropdown from "./components/UnidadeDropdown";
+import SetorDropdown from "./components/SetorDropdown";
 
 const SignatureGenerator = () => {
   // API
@@ -25,10 +27,9 @@ const SignatureGenerator = () => {
     name: "",
     jobTitle: "",
     email: "",
-    linkedin: "",
     phone: "",
     selectedUnit: "",
-    selectedDivision: "",
+    selectedDepartment: "",
     selectedLogradouro: "",
     selectedNumero: "",
     selectedBairro: "",
@@ -65,8 +66,20 @@ const SignatureGenerator = () => {
   const validateForm = () => {
     let errors = {};
 
+    const formValues = Object.values(formData);
+    
+    const anyFieldIsEmpty = formValues.some(value => {
+        // We trim strings to treat "   " (whitespace only) as empty
+        return typeof value === 'string' ? value.trim() === '' : !value;
+    });
+
+    if (anyFieldIsEmpty) {
+        // You can set a generic error message here
+        errors.general = "Formulário inválido - todos os campos devem ser preenchidos.";
+    }
+
     // Validate name field
-    if (!formData.name || !formData.jobTitle || !formData.selectedDivision) {
+    if (!formData.name || !formData.jobTitle ) {
       errors.name = "Dados não preenchidos.";
     }
 
@@ -75,9 +88,9 @@ const SignatureGenerator = () => {
     }
 
     // Validate cargo field
-    if (!address) {
-      errors.address = "Dados não preenchidos.";
-    }
+    // if (!address) {
+    //   errors.address = "Dados não preenchidos.";
+    // }
 
     // Set the errors and update form validity
     setErrors(errors);
@@ -94,24 +107,27 @@ const SignatureGenerator = () => {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const handleSelectDivision = (eventKey) => {
+  const handleSelectDepartment = (eventKey) => {
     setAddress(eventKey);
-    let selectedDivision = "";
+    let selectedDepartment = "";
     switch (eventKey) {
       case "STI":
-        selectedDivision = "Superintendência de Tecnologia da Informação - STI";
+        selectedDepartment = "Superintendência de Tecnologia da Informação - STI";
         break;
       case "SGPSO":
-        selectedDivision =
+        selectedDepartment =
           "Superintendência de Gestão de Pessoas e Saúde Ocupacional - SGPSO";
         break;
       case "Corregedoria":
-        selectedDivision = "Corregedoria Geral";
+        selectedDepartment = "Corregedoria Geral";
+        break;
+      case "Defensoria":
+        selectedDepartment = "DOS DIREITOS DAS CRIANÇAS E DOS ADOLESCENTES (CÍVEL E ATO INFRACIONAL), EXECUÇÕES PENAIS E TRIBUNAL DO JÚRI (SUMÁRIO E PLENÁRIO)";
         break;
       default:
-        selectedDivision = "vazio";
+        selectedDepartment = "vazio";
     }
-    setFormData({ ...formData, selectedDivision });
+    setFormData({ ...formData, selectedDepartment });
   };
 
   // switch (eventKey) {
@@ -318,7 +334,11 @@ const SignatureGenerator = () => {
               <Col>
                 <div className="form-group">
                   <label>Setor:</label>
-                  <DropdownButton
+                  <SetorDropdown
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                  {/* <DropdownButton
                     id="dropdown-basic-button"
                     title={address || "Selecione o Setor"}
                     onSelect={handleSelectDivision}
@@ -329,7 +349,8 @@ const SignatureGenerator = () => {
                     <Dropdown.Item eventKey="Corregedoria">
                       Corregedoria
                     </Dropdown.Item>
-                  </DropdownButton>
+                    <Dropdown.Item eventKey="Defensoria">Defensoria</Dropdown.Item>
+                  </DropdownButton> */}
                 </div>
                 <br />
                 <br />
@@ -454,7 +475,7 @@ const generateHTML = (data) => {
                       <td style="border-left: 3px solid rgb(65, 99, 70);  padding-left: 0.5vw;">
                       <p style="margin: 0px !important"><i>${data.name}</i><br/>
                         ${data.jobTitle}<br/>
-                        ${data.selectedDivision}<br/>
+                        ${data.selectedDepartment}<br/>
                         <!--Defensoria Pública do Estado de Minas Gerais<br/>-->
                         ${data.selectedUnit}<br />
                         ${data.selectedLogradouro}, ${data.selectedNumero} - ${data.selectedBairro} - ${data.selectedCidade}/${data.selectedUf}<br/>

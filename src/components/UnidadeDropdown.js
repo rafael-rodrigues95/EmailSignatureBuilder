@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import FormControl from "react-bootstrap/FormControl";
-import { useUnidadeData } from "../hooks/useUnidadeData"; // adjust path if needed
+import { useUnidadeData } from "../hooks/useFetchData";
 
 export default function UnidadeDropdown({ formData, setFormData }) {
-  const { data } = useUnidadeData(); // your backend fetch
+  const { data } = useUnidadeData(); // backend fetch
   const [unitName, setUnitName] = useState("");
   const [logradouro, setLogradouro] = useState("");
   const [numero, setNumero] = useState("");
@@ -49,7 +49,7 @@ export default function UnidadeDropdown({ formData, setFormData }) {
         {/* Search Box */}
         <div style={{ padding: "0.5rem" }}>
           <FormControl
-            placeholder="Buscar unidade..."
+            placeholder="Buscar Unidade..."
             autoFocus
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
