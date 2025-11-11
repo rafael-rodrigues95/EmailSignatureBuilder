@@ -13,9 +13,8 @@ export default function SetorDropdown({ formData, setFormData }) {
     const selected = data.find((s) => String(s.coUuid) === eventKey);
     if (selected) {
       setDepartmentName(selected.noSetor);
-      setFormData({ ...formData, 
-        selectedDepartment: selected.noSetor });
-      console.log(formData)
+      setFormData({ ...formData, selectedDepartment: selected.noSetor });
+      console.log(formData);
     }
   };
 
@@ -28,7 +27,13 @@ export default function SetorDropdown({ formData, setFormData }) {
     <>
       <DropdownButton
         id="dropdown-basic-button"
-        title={departmentName || "Selecione o Setor"}
+        title={
+          departmentName
+            ? departmentName.length > 40
+              ? departmentName.substring(0, 40) + "..."
+              : departmentName
+            : "Selecione o Setor"
+        }
         onSelect={handleSelectDepartment}
         variant="secondary"
       >

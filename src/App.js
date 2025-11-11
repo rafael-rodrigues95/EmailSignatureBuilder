@@ -8,9 +8,10 @@ import {
   Button,
   ToggleButton,
   ToggleButtonGroup,
-  FormControl,
+  FormControl
 } from "react-bootstrap"; // React Bootstrap components
 import "bootstrap/dist/js/bootstrap.bundle.min"; // Bootstrap Bundle JS
+import "./scss/custom.scss"; // Custom Sass file
 import "./scss/custom.scss"; // Custom Sass file
 import "./App.css"; // Other CSS files
 import { useUnidadeData } from "./hooks/useFetchData";
@@ -19,6 +20,8 @@ import InputMask from "react-input-mask";
 import React, { useState, useRef, useEffect } from "react";
 import UnidadeDropdown from "./components/UnidadeDropdown";
 import SetorDropdown from "./components/SetorDropdown";
+import SkeletonLoading from "./components/SkeletonLoading";
+import Image from "./images/image.png";
 
 const SignatureGenerator = () => {
   // API
@@ -67,19 +70,20 @@ const SignatureGenerator = () => {
     let errors = {};
 
     const formValues = Object.values(formData);
-    
-    const anyFieldIsEmpty = formValues.some(value => {
-        // We trim strings to treat "   " (whitespace only) as empty
-        return typeof value === 'string' ? value.trim() === '' : !value;
+
+    const anyFieldIsEmpty = formValues.some((value) => {
+      // We trim strings to treat "   " (whitespace only) as empty
+      return typeof value === "string" ? value.trim() === "" : !value;
     });
 
     if (anyFieldIsEmpty) {
-        // You can set a generic error message here
-        errors.general = "Formulário inválido - todos os campos devem ser preenchidos.";
+      // You can set a generic error message here
+      errors.general =
+        "Formulário inválido - todos os campos devem ser preenchidos.";
     }
 
     // Validate name field
-    if (!formData.name || !formData.jobTitle ) {
+    if (!formData.name || !formData.jobTitle) {
       errors.name = "Dados não preenchidos.";
     }
 
@@ -104,7 +108,7 @@ const SignatureGenerator = () => {
   const divRef = useRef(null);
 
   const { data, isLoading, error } = useUnidadeData();
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <SkeletonLoading data={data} />;
   if (error) return <p>Error: {error.message}</p>;
 
   const handleSelectDepartment = (eventKey) => {
@@ -112,7 +116,8 @@ const SignatureGenerator = () => {
     let selectedDepartment = "";
     switch (eventKey) {
       case "STI":
-        selectedDepartment = "Superintendência de Tecnologia da Informação - STI";
+        selectedDepartment =
+          "Superintendência de Tecnologia da Informação - STI";
         break;
       case "SGPSO":
         selectedDepartment =
@@ -122,7 +127,8 @@ const SignatureGenerator = () => {
         selectedDepartment = "Corregedoria Geral";
         break;
       case "Defensoria":
-        selectedDepartment = "DOS DIREITOS DAS CRIANÇAS E DOS ADOLESCENTES (CÍVEL E ATO INFRACIONAL), EXECUÇÕES PENAIS E TRIBUNAL DO JÚRI (SUMÁRIO E PLENÁRIO)";
+        selectedDepartment =
+          "DOS DIREITOS DAS CRIANÇAS E DOS ADOLESCENTES (CÍVEL E ATO INFRACIONAL), EXECUÇÕES PENAIS E TRIBUNAL DO JÚRI (SUMÁRIO E PLENÁRIO)";
         break;
       default:
         selectedDepartment = "vazio";
@@ -175,273 +181,295 @@ const SignatureGenerator = () => {
     }
   };
 
-  const titleStyle = {
-    fontSize: "5vh",
-  };
-
-  const imageStyle = {};
-
-  const divTitleStyle = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgb(50, 158, 134)",
-    color: "white",
-  };
-
   return (
-    <div>
-      <div style={divTitleStyle}>
-        <Container>
-          <Row>
-            <Col>
-              <p>&nbsp;</p>
-              <p className="mt-5 mb-5">
-                Gerador de Assinatura para <br />
-                <span style={titleStyle}>Email da DPMG</span>
-              </p>
-              <p>&nbsp;</p>
-            </Col>
-            <Col>
-              <p>&nbsp;</p>
-            </Col>
-            <Col xs={2}>
-              <img
-                src="https://gerais.defensoria.mg.def.br/sistemas/scsdp/img/logo.png"
-                className="imageStyle"
-                alt="logo da Defensoria"
-                height="150vw"
-              ></img>
+    <div className="app-wrapper">
+      <div className="divTitleStyle">
+        <Container fluid>
+          <Row className="justify-content-center">
+            <Col xs={10} md={9} lg={8}>
+              <div className="p-4">
+                <Row>
+                  {/* Left container (2/3) */}
+                  <Col md={8}>
+                    <p className="text-center text-white py-3 titulo-form">
+                      Gerador de Email Institucional da DPMG
+                    </p>
+                  </Col>
+                  <Col md={4}></Col>
+                </Row>
+              </div>
             </Col>
           </Row>
         </Container>
       </div>
 
-      <p>&nbsp;</p>
-      <Container>
-        <div className="card  px-5" Style="border-color: white !important">
-          <form>
-            <Row>
-              <Col>
-                <p>&nbsp;</p>
-                <p>
-                  Preencha todos os campos abaixo para criar uma assinatura HTML
-                  <br />
-                  para seu email institucional.
-                </p>
-                <p>&nbsp;</p>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <div className="form-group">
-                  <label>Seu nome para a assinatura:</label>
-                  <br />
-                  <FormControl
-                    type="text"
-                    placeholder="Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                </div>
-                <br />
-              </Col>
-              <Col>
-                <div className="form-group">
-                  <label>Seu cargo:</label>
-                  <br />
-                  <FormControl
-                    type="text"
-                    placeholder="Job Title"
-                    name="jobTitle"
-                    value={formData.jobTitle}
-                    onChange={handleChange}
-                  />
-                </div>
-                <br />
-              </Col>
-              <Col>
-                <div className="form-group">
-                  <label>Possui Ramal?</label>
-                  <br />
-                  <ToggleButtonGroup
-                    type="radio"
-                    name="toggle"
-                    value={hasTelephone}
-                    onChange={handleRamal}
-                  >
-                    <ToggleButton id="tbg-btn-1" value={1} variant="secondary">
-                      Sim
-                    </ToggleButton>
-                    <ToggleButton id="tbg-btn-2" value={2} variant="secondary">
-                      Não
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                </div>
-              </Col>
-            </Row>
+      <main className="body-section">
+        <Container fluid>
+          <Row className="justify-content-center">
+            <Col xs={10} md={9} lg={8}>
+              <div className="p-4">
+                <Row>
+                  {/* Left container (2/3) */}
+                  <Col md={8} className="main-card shadow-lg left-col p-4">
+                    <p className="p4">
+                      Preencha todos os campos abaixo para criar uma assinatura
+                      HTML
+                      <br />
+                      para seu email institucional.
+                    </p>
+                    <p>&nbsp;</p>
 
-            <Row>
-              <Col>
-                <div className="form-group">
-                  <label>Seu email DPMG</label>
-                  <br />
-                  <FormControl
-                    type="text"
-                    placeholder="email@dpmg.mg.def.br"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-                <br />
-              </Col>
-              <Col>
-                <div className="form-group">
-                  <label>Unidade:</label>
-                  <UnidadeDropdown
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                </div>
-                <br />
-              </Col>
-              <Col>
-                <div
-                  className="form-group"
-                  style={{
-                    opacity: hasTelephone === 1 ? 1 : 0,
-                    transition: "all .4s",
-                    visibility: hasTelephone === 1 ? "visible" : "hidden",
-                  }}
-                >
-                  <label>Ramal:</label>
-                  <br />
-                  <FormControl
-                    type="text"
-                    as={InputMask}
-                    mask="(99) 9999-9999"
-                    placeholder="Phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <div className="form-group">
-                  <label>Setor:</label>
-                  <SetorDropdown
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                  {/* <DropdownButton
-                    id="dropdown-basic-button"
-                    title={address || "Selecione o Setor"}
-                    onSelect={handleSelectDivision}
-                    variant="secondary"
-                  >
-                    <Dropdown.Item eventKey="STI">STI</Dropdown.Item>
-                    <Dropdown.Item eventKey="SGPSO">SGPSO</Dropdown.Item>
-                    <Dropdown.Item eventKey="Corregedoria">
-                      Corregedoria
-                    </Dropdown.Item>
-                    <Dropdown.Item eventKey="Defensoria">Defensoria</Dropdown.Item>
-                  </DropdownButton> */}
-                </div>
-                <br />
-                <br />
-              </Col>
-              <Col></Col>
-            </Row>
-            <Row>
-              <Col>
-                <Button
-                  style={{ opacity: isFormValid ? 1 : 0.5 }}
-                  disabled={!isFormValid}
-                  type="button"
-                  variant="primary"
-                  onClick={handleGenerate}
-                >
-                  Gerar assinatura HTML
-                </Button>
-                <p>&nbsp;</p>
-              </Col>
-            </Row>
-          </form>
-        </div>
-      </Container>
-      <p>&nbsp;</p>
+                    <div>
+                      <form>
+                        <Row>
+                          <Col>
+                            <div className="form-group">
+                              <label>Seu nome para a assinatura:</label>
+                              <br />
+                              <FormControl
+                                type="text"
+                                placeholder="Name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                              />
+                            </div>
+                            <br />
+                          </Col>
+                          <Col>
+                            <div className="form-group">
+                              <label>Cargo:</label>
+                              <br />
+                              <FormControl
+                                type="text"
+                                placeholder="Job Title"
+                                name="jobTitle"
+                                value={formData.jobTitle}
+                                onChange={handleChange}
+                              />
+                            </div>
+                            <br />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <div className="form-group">
+                              <label>Email DPMG:</label>
+                              <br />
+                              <FormControl
+                                type="text"
+                                placeholder="email@dpmg.mg.def.br"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                              />
+                            </div>
+                            <br />
+                          </Col>
+                          <Col>
+                            <div className="form-group">
+                              <label>Possui Ramal?</label>
+                              <br />
+                              <ToggleButtonGroup
+                                type="radio"
+                                name="toggle"
+                                value={hasTelephone}
+                                onChange={handleRamal}
+                              >
+                                <ToggleButton
+                                  id="tbg-btn-1"
+                                  value={1}
+                                  variant="secondary"
+                                >
+                                  Sim
+                                </ToggleButton>
+                                <ToggleButton
+                                  id="tbg-btn-2"
+                                  value={2}
+                                  variant="secondary"
+                                >
+                                  Não
+                                </ToggleButton>
+                              </ToggleButtonGroup>
+                            </div>
+                          </Col>
+                        </Row>
 
-      <Container>
-        <div
-          className="card px-5"
-          style={{
-            opacity: sigGenerated ? 1 : 0,
-            transition: "all .5s",
-            visibility: sigGenerated ? "visible" : "hidden",
-          }}
-        >
-          <h3 className="mt-3" style={titleStyle}>
-            &nbsp;
-          </h3>
-          <div>
-            {/* <pre>{htmlCode}</pre> */}
-            <div ref={divRef} dangerouslySetInnerHTML={{ __html: htmlCode }} />
-            <p>&nbsp;</p>
-            <Button variant="primary" onClick={handleSelectText}>
-              Copiar para a Área de transferência
-            </Button>
-            <p>&nbsp;</p>
-          </div>
-        </div>
-      </Container>
-      <p>&nbsp;</p>
-      <Container>
-        <Row>
-          <Col>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in
-              neque volutpat, euismod nunc eu, posuere ante. Nullam tincidunt
-              commodo laoreet. Curabitur eu orci id risus suscipit faucibus. Sed
-              mollis faucibus ligula, vitae semper urna ornare id. Praesent id
-              elit vitae mauris suscipit vulputate. Phasellus efficitur eros at
-              tellus volutpat, sed facilisis nisl lacinia. Integer sed nisi quis
-              velit pharetra pretium sed vel nisl. Ut gravida, magna non
-              bibendum dignissim, odio orci molestie eros, quis posuere massa
-              velit ac neque. Sed vitae felis a ante lobortis suscipit at
-              lacinia sem. Etiam et lectus a augue eleifend consectetur. Mauris
-              tellus nibh, molestie vel lacus eu, consectetur scelerisque
-              libero. Phasellus consectetur fermentum faucibus. Phasellus
-              pretium nisi semper fringilla mollis. In commodo quam quis diam
-              suscipit hendrerit. Vestibulum et quam et ex aliquet ultricies.
-              Quisque tellus leo, consectetur in elit sit amet, facilisis
-              maximus dui. Curabitur lobortis mi nec pharetra ultricies. Proin
-              congue diam nec libero eleifend ultrices. Praesent augue dui,
-              finibus at sapien eget, tempus condimentum purus.
-            </p>
-          </Col>
-          <Col>
-            <p>
-              Vivamus nibh eros, scelerisque eget nulla a, eleifend volutpat
-              erat. Sed tempor eleifend nunc, molestie sodales diam condimentum
-              id. Nam id felis non orci sagittis aliquet. Pellentesque egestas
-              non est eu scelerisque. Integer sed facilisis tellus, aliquam
-              porta nisl. Sed accumsan justo at blandit vestibulum. Praesent
-              iaculis pellentesque eros. Pellentesque feugiat justo mauris, non
-              dictum odio viverra eu. Aliquam suscipit fringilla gravida.
-              Vestibulum commodo nulla est, eget finibus ipsum malesuada
-              venenatis. Cras luctus tellus eget nibh consequat sollicitudin. In
-              ultricies dui at libero tincidunt accumsan. Aenean quis dictum
-              magna. Curabitur lorem ex, efficitur at arcu eu, malesuada
-              ultrices elit. Sed sit amet velit dolor.
-            </p>
-          </Col>
-        </Row>
-      </Container>
+                        <Row>
+                          <Col>
+                            <div className="form-group">
+                              <label>Setor:</label>
+                              <SetorDropdown
+                                formData={formData}
+                                setFormData={setFormData}
+                              />
+                              {/* <DropdownButton
+                                id="dropdown-basic-button"
+                                title={address || "Selecione o Setor"}
+                                onSelect={handleSelectDivision}
+                                variant="secondary"
+                              >
+                                <Dropdown.Item eventKey="STI">STI</Dropdown.Item>
+                                <Dropdown.Item eventKey="SGPSO">SGPSO</Dropdown.Item>
+                                <Dropdown.Item eventKey="Corregedoria">
+                                  Corregedoria
+                                </Dropdown.Item>
+                                <Dropdown.Item eventKey="Defensoria">Defensoria</Dropdown.Item>
+                              </DropdownButton> */}
+                            </div>
+                            <br />
+                          </Col>
+
+                          <Col>
+                            <div
+                              className="form-group"
+                              style={{
+                                opacity: hasTelephone === 1 ? 1 : 0,
+                                transition: "all .4s",
+                                visibility:
+                                  hasTelephone === 1 ? "visible" : "hidden",
+                              }}
+                            >
+                              <label>Ramal:</label>
+                              <br />
+                              <FormControl
+                                type="text"
+                                as={InputMask}
+                                mask="(99) 9999-9999"
+                                placeholder="Phone"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                              />
+                            </div>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <div className="form-group">
+                              <label>Unidade:</label>
+                              <UnidadeDropdown
+                                formData={formData}
+                                setFormData={setFormData}
+                              />
+                            </div>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                          </Col>
+                          <Col></Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <Button
+                              style={{ opacity: isFormValid ? 1 : 0.5 }}
+                              disabled={!isFormValid}
+                              type="button"
+                              variant="primary"
+                              onClick={handleGenerate}
+                            >
+                              Gerar assinatura HTML
+                            </Button>
+                            <p>&nbsp;</p>
+                          </Col>
+                        </Row>
+                      </form>
+                    </div>
+
+                    <p>&nbsp;</p>
+
+                    <Container>
+                      <div
+                        className="card px-5"
+                        style={{
+                          opacity: sigGenerated ? 1 : 0,
+                          transition: "all .5s",
+                          visibility: sigGenerated ? "visible" : "hidden",
+                        }}
+                      >
+                        <h3 className="mt-3 titleStyle">&nbsp;</h3>
+                        <div>
+                          {/* <pre>{htmlCode}</pre> */}
+                          <div
+                            ref={divRef}
+                            dangerouslySetInnerHTML={{ __html: htmlCode }}
+                          />
+                          <p>&nbsp;</p>
+                          <Button variant="primary" onClick={handleSelectText}>
+                            Copiar para a Área de transferência
+                          </Button>
+                          <p>&nbsp;</p>
+                        </div>
+                      </div>
+                    </Container>
+                    <p>&nbsp;</p>
+                    <Container>
+                      <Row>
+                        <Col>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Nam in neque volutpat, euismod nunc eu,
+                            posuere ante. Nullam tincidunt commodo laoreet.
+                            Curabitur eu orci id risus suscipit faucibus. Sed
+                            mollis faucibus ligula, vitae semper urna ornare id.
+                            Praesent id elit vitae mauris suscipit vulputate.
+                            Phasellus efficitur eros at tellus volutpat, sed
+                            facilisis nisl lacinia. Integer sed nisi quis velit
+                            pharetra pretium sed vel nisl. Ut gravida, magna non
+                            bibendum dignissim, odio orci molestie eros, quis
+                            posuere massa velit ac neque. Sed vitae felis a ante
+                            lobortis suscipit at lacinia sem. Etiam et lectus a
+                            augue eleifend consectetur. Mauris tellus nibh,
+                            molestie vel lacus eu, consectetur scelerisque
+                            libero. Phasellus consectetur fermentum faucibus.
+                            Phasellus pretium nisi semper fringilla mollis. In
+                            commodo quam quis diam suscipit hendrerit.
+                            Vestibulum et quam et ex aliquet ultricies. Quisque
+                            tellus leo, consectetur in elit sit amet, facilisis
+                            maximus dui. Curabitur lobortis mi nec pharetra
+                            ultricies. Proin congue diam nec libero eleifend
+                            ultrices. Praesent augue dui, finibus at sapien
+                            eget, tempus condimentum purus.
+                          </p>
+                        </Col>
+                        <Col>
+                          <p>
+                            Vivamus nibh eros, scelerisque eget nulla a,
+                            eleifend volutpat erat. Sed tempor eleifend nunc,
+                            molestie sodales diam condimentum id. Nam id felis
+                            non orci sagittis aliquet. Pellentesque egestas non
+                            est eu scelerisque. Integer sed facilisis tellus,
+                            aliquam porta nisl. Sed accumsan justo at blandit
+                            vestibulum. Praesent iaculis pellentesque eros.
+                            Pellentesque feugiat justo mauris, non dictum odio
+                            viverra eu. Aliquam suscipit fringilla gravida.
+                            Vestibulum commodo nulla est, eget finibus ipsum
+                            malesuada venenatis. Cras luctus tellus eget nibh
+                            consequat sollicitudin. In ultricies dui at libero
+                            tincidunt accumsan. Aenean quis dictum magna.
+                            Curabitur lorem ex, efficitur at arcu eu, malesuada
+                            ultrices elit. Sed sit amet velit dolor.
+                          </p>
+                        </Col>
+                      </Row>
+                    </Container>
+                  </Col>
+
+                  {/* Right container (1/3) */}
+                  <Col md={4} className="right-col text-center">
+                    {/* Placeholder for image/decorative content */}
+
+                    <div className="decorative-box">
+                      <img className="corner-image" src={Image} alt="---"></img>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </main>
     </div>
   );
 };
@@ -457,7 +485,7 @@ const generateHTML = (data) => {
 
       <body>
       <table cellpadding="0" cellspacing="0"
-        style="vertical-align: -webkit-baseline-middle; font-size: 1.5vw; font-family: Aptos, Arial, sans-serif;">
+        style="vertical-align: -webkit-baseline-middle; font-size: 0.8vw; font-family: Aptos, Arial, sans-serif;">
         <tbody>
           <tr>
             <td>
@@ -472,7 +500,7 @@ const generateHTML = (data) => {
                             src="https://gerais.defensoria.mg.def.br/sistemas/scsdp/img/logo.png" />
                       </a>
                       </td>
-                      <td style="border-left: 3px solid rgb(65, 99, 70);  padding-left: 0.5vw;">
+                      <td style="border-left: 3px solid rgb(65, 99, 70);  padding-left: 0.8vw;">
                       <p style="margin: 0px !important"><i>${data.name}</i><br/>
                         ${data.jobTitle}<br/>
                         ${data.selectedDepartment}<br/>

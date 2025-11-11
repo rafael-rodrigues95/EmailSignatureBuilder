@@ -2,10 +2,6 @@
   text-align: center;
 }
 
-html {
-  color: red;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -53,6 +49,80 @@ h3 {
 
 .App-link {
   color: #61dafb;
+}
+
+.titleStyle {
+  font-size: "5vh";
+}
+
+.imageStyle  {}
+
+.divTitleStyle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #24645b;
+  height: 15vh;
+  color: white;
+}
+
+/* Page */
+
+.app-wrapper {
+
+}
+
+/* Header */
+.header {
+  background-color: #24645b;
+  color: white;
+  height: 15vh;
+  position: relative;
+  z-index: 1;
+}
+
+.titulo-form {
+  margin-top: -5vh;
+}
+
+/* Body section (white card that overlaps header) */
+.body-section {
+  position: relative;
+  margin-top: -10vh; /* overlaps the header */
+  z-index: 2;
+}
+
+/* Main white container */
+.main-card {
+  background-color: white;
+  border-radius: 20px;
+  min-height: 75vh;
+}
+
+/* Optional: adjust layout proportions */
+.left-col {
+  border-right: 1px solid #eee;
+}
+
+.right-col {
+  display: flex;
+
+}
+
+/* Decorative image box */
+.decorative-box {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+.corner-image {
+  position: absolute;
+  top: 10px;
+  margin-top: -5vh;
+  right: 10px;
+  width: 17vw;
+  object-fit: contain;
 }
 
 @keyframes App-logo-spin {

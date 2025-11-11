@@ -1,0 +1,39 @@
+/* Header */
+.header {
+  background-color: rgb(50, 158, 134);
+  color: white;
+  height: 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Body section (white card that overlaps header) */
+.body-section {
+  position: relative;
+  margin-top: -40px; /* overlaps the header */
+  z-index: 2;
+}
+
+/* Main white container */
+.main-card {
+  background-color: white;
+  border-radius: 20px;
+  min-height: 75vh;
+}
+
+/* Optional: adjust layout proportions */
+.left-col {
+  border-right: 1px solid #eee;
+}
+
+.right-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Decorative image box */
+.decorative-box img {
+  max-width: 100%;
+  border-radius: 15px;
+}
