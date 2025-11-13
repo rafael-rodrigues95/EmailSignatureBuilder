@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import FormControl from "react-bootstrap/FormControl";
@@ -8,49 +8,75 @@ export default function SetorDropdown({ formData, setFormData }) {
   const { data } = useSetorData(); // backend fetch
   const [departmentName, setDepartmentName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const dropdownRef = useRef(null);
 
+  // Handle selection
   const handleSelectDepartment = (eventKey) => {
     const selected = data.find((s) => String(s.coUuid) === eventKey);
     if (selected) {
       setDepartmentName(selected.noSetor);
-      setFormData({ ...formData, selectedDepartment: selected.noSetor });
+      setFormData({
+        ...formData,
+        selectedDepartment: selected.noSetor,
+      });
       console.log(formData);
     }
   };
 
-  // Filter results based on search term
+  // Filter dropdown items
   const filteredData = data?.filter((s) =>
     s.noSetor.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Safety patch for React-Bootstrap parentNode error
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   return (
-    <>
+    <div ref={dropdownRef} onKeyDown={handleKeyDown}>
       <DropdownButton
         id="dropdown-basic-button"
         title={
-          departmentName
-            ? departmentName.length > 40
-              ? departmentName.substring(0, 40) + "..."
-              : departmentName
-            : "Selecione o Setor"
+          <span
+            style={{
+              display: "inline-block",
+              maxWidth: "250px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              verticalAlign: "middle",
+            }}
+          >
+            {departmentName || "Selecione o Setor"}
+          </span>
         }
         onSelect={handleSelectDepartment}
         variant="secondary"
+        renderMenuOnMount={true} // important to avoid portal focus bugs
+        popperConfig={{ strategy: "fixed" }} // keeps DOM structure stable
       >
         {/* Search Box */}
-        <div style={{ padding: "0.5rem" }}>
+        <Dropdown.ItemText as="div" style={{ padding: "0.5rem" }}>
           <FormControl
             placeholder="Buscar Setor..."
             autoFocus
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.stopPropagation()} // stops arrow key crash
           />
-        </div>
+        </Dropdown.ItemText>
 
         <Dropdown.Divider />
 
-        {/* List of filtered items */}
-        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+        {/* Scrollable list */}
+        <Dropdown.ItemText
+          as="div"
+          style={{ maxHeight: "300px", overflowY: "auto" }}
+        >
           {filteredData && filteredData.length > 0 ? (
             filteredData.map((s) => (
               <Dropdown.Item key={s.coUuid} eventKey={String(s.coUuid)}>
@@ -60,8 +86,8 @@ export default function SetorDropdown({ formData, setFormData }) {
           ) : (
             <Dropdown.Item disabled>Nenhum resultado encontrado</Dropdown.Item>
           )}
-        </div>
+        </Dropdown.ItemText>
       </DropdownButton>
-    </>
+    </div>
   );
 }

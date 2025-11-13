@@ -8,7 +8,7 @@ import {
   Button,
   ToggleButton,
   ToggleButtonGroup,
-  FormControl
+  FormControl,
 } from "react-bootstrap"; // React Bootstrap components
 import "bootstrap/dist/js/bootstrap.bundle.min"; // Bootstrap Bundle JS
 import "./scss/custom.scss"; // Custom Sass file
@@ -46,6 +46,7 @@ const SignatureGenerator = () => {
   const [hasTelephone, setHasTelephone] = useState(1);
   const [errors, setErrors] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const { data, isLoading, error } = useUnidadeData();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -107,7 +108,6 @@ const SignatureGenerator = () => {
 
   const divRef = useRef(null);
 
-  const { data, isLoading, error } = useUnidadeData();
   if (isLoading) return <SkeletonLoading data={data} />;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -182,7 +182,7 @@ const SignatureGenerator = () => {
   };
 
   return (
-    <div className="app-wrapper">
+    <div className={`app-wrapper ${!isLoading ? "visible" : ""}`}>
       <div className="divTitleStyle">
         <Container fluid>
           <Row className="justify-content-center">
@@ -224,7 +224,7 @@ const SignatureGenerator = () => {
                         <Row>
                           <Col>
                             <div className="form-group">
-                              <label>Seu nome para a assinatura:</label>
+                              <label>Nome:</label>
                               <br />
                               <FormControl
                                 type="text"
@@ -348,10 +348,10 @@ const SignatureGenerator = () => {
                           <Col>
                             <div className="form-group">
                               <label>Unidade:</label>
-                              <UnidadeDropdown
-                                formData={formData}
-                                setFormData={setFormData}
-                              />
+                                <UnidadeDropdown
+                                  formData={formData}
+                                  setFormData={setFormData}
+                                />
                             </div>
                             <br />
                             <br />
@@ -390,7 +390,6 @@ const SignatureGenerator = () => {
                       >
                         <h3 className="mt-3 titleStyle">&nbsp;</h3>
                         <div>
-                          {/* <pre>{htmlCode}</pre> */}
                           <div
                             ref={divRef}
                             dangerouslySetInnerHTML={{ __html: htmlCode }}
@@ -458,8 +457,6 @@ const SignatureGenerator = () => {
 
                   {/* Right container (1/3) */}
                   <Col md={4} className="right-col text-center">
-                    {/* Placeholder for image/decorative content */}
-
                     <div className="decorative-box">
                       <img className="corner-image" src={Image} alt="---"></img>
                     </div>
@@ -501,7 +498,7 @@ const generateHTML = (data) => {
                       </a>
                       </td>
                       <td style="border-left: 3px solid rgb(65, 99, 70);  padding-left: 0.8vw;">
-                      <p style="margin: 0px !important"><i>${data.name}</i><br/>
+                      <p style="margin: 0px !important"><em>${data.name.toUpperCase()}</em><br/>
                         ${data.jobTitle}<br/>
                         ${data.selectedDepartment}<br/>
                         <!--Defensoria Pública do Estado de Minas Gerais<br/>-->

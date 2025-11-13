@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import FormControl from "react-bootstrap/FormControl";
@@ -13,6 +13,7 @@ export default function UnidadeDropdown({ formData, setFormData }) {
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const dropdownRef = useRef(null);
 
   const handleSelectUnit = (eventKey) => {
     const selected = data.find((u) => String(u.coUuid) === eventKey);
@@ -33,13 +34,21 @@ export default function UnidadeDropdown({ formData, setFormData }) {
     }
   };
 
+    // Disable arrow key navigation
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   // Filter results based on search term
   const filteredData = data?.filter((u) =>
     u.noUnidade.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <>
+    <div ref={dropdownRef} onKeyDown={handleKeyDown}>
       <DropdownButton
         id="dropdown-basic-button"
         title={unitName || "Selecione a Unidade"}
@@ -53,6 +62,7 @@ export default function UnidadeDropdown({ formData, setFormData }) {
             autoFocus
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => e.stopPropagation()}
           />
         </div>
 
@@ -71,6 +81,6 @@ export default function UnidadeDropdown({ formData, setFormData }) {
           )}
         </div>
       </DropdownButton>
-    </>
+    </div>
   );
 }
