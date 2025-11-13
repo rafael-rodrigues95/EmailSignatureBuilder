@@ -15,6 +15,7 @@ export default function UnidadeDropdown({ formData, setFormData }) {
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef(null);
 
+  // Handle selection
   const handleSelectUnit = (eventKey) => {
     const selected = data.find((u) => String(u.coUuid) === eventKey);
     if (selected) {
@@ -50,7 +51,7 @@ export default function UnidadeDropdown({ formData, setFormData }) {
   return (
     <div ref={dropdownRef} onKeyDown={handleKeyDown}>
       <DropdownButton
-        id="dropdown-basic-button"
+        id="unit-dropdown"
         title={unitName || "Selecione a Unidade"}
         onSelect={handleSelectUnit}
         variant="secondary"
@@ -62,13 +63,10 @@ export default function UnidadeDropdown({ formData, setFormData }) {
             autoFocus
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => e.stopPropagation()}
           />
         </div>
 
         <Dropdown.Divider />
-
-        {/* List of filtered items */}
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           {filteredData && filteredData.length > 0 ? (
             filteredData.map((u) => (

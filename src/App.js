@@ -505,11 +505,9 @@ const generateHTML = (data) => {
                         ${data.selectedUnit}<br />
                         ${data.selectedLogradouro}, ${data.selectedNumero} - ${data.selectedBairro} - ${data.selectedCidade}/${data.selectedUf}<br/>
                         Ramal: <a href="tel:${data.phone}"
-                        style="text-decoration: none; color: rgb(30, 30, 30); font-size: 0.8vw; margin-right: 10px;">
-                        ${data.phone}
-                        </a> 
-                        / Geral: <a href="tel:03125228676"
-                        style="text-decoration: none; color: rgb(30, 30, 30); font-size: 0.8vw; margin-right: 10px;">
+                        style="text-decoration: none; color: rgb(30, 30, 30); font-size: 0.8vw">
+                        ${data.phone}</a> / Geral: <a href="tel:03125228676"
+                        style="text-decoration: none; color: rgb(30, 30, 30); font-size: 0.8vw">
                         (31) 2522-8676
                         </a>
                       </p>
